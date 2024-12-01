@@ -846,7 +846,7 @@ if __name__ == '__main__':
     g.display(sep='|')
 
     print('now lets print a little xmas art')
-    sleighart = """\
+    sleighart = r"""
 __     _  __ 
 | \__ `\O/  `--  {}    \}    {/
 \    \_(~)/______/=____/=____/=*
