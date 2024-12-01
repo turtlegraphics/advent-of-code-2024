@@ -1,8 +1,8 @@
 #
-# Advent of Code 2023
+# Advent of Code 2024
 # Bryan Clair
 #
-# Day --
+# Day 01
 #
 import sys
 sys.path.append("..")
@@ -17,10 +17,26 @@ inputlines = [x.strip() for x in open(args.file).readlines()]
 # name, val = parser.match(line).groups()
 # val = int(val)
 
-part1, part2 = 0,0
+id1 = []
+id2 = []
 
 for line in inputlines:
-    print(line)
+    a,b = line.split()
+    id1.append(int(a))
+    id2.append(int(b))
+
+id1.sort()
+id2.sort()
+part1 = 0
+for i in range(len(id1)):
+    d = abs(id1[i] - id2[i])
+    part1 += d
 
 print('part1:',part1)
+
+part2 = 0
+for l in id1:
+    for m in id2:
+        if l == m:
+            part2 += l
 print('part2:',part2)
