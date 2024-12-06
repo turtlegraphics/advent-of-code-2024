@@ -29,7 +29,15 @@ for (x,y) in room:
 room[sx,sy] = '.'
 
 def dopath(sx,sy):
+    """
+    trace a path from starting position sx,sy
+    return the traced path if it exits the room
+    return 'LOOP' if it enters into a loop
+    """
+    
+    # keep track of location/directions that are visited
     beenthere = set()
+    
     # return None if looped
     px,py = sx,sy
     dx,dy = 0,1
@@ -40,7 +48,10 @@ def dopath(sx,sy):
         ny = py + dy
         try:
             if room[nx,ny] == '#':
+                # turn right
                 dx,dy = dy,-dx
+                
+                # check for loop
                 if (px,py,dx,dy) in beenthere:
                     return 'LOOP'
                 else:
@@ -56,17 +67,29 @@ trace = dopath(sx,sy)
 for (x,y) in trace:
     if trace[x,y] == 'X':
         part1 += 1
+print('part1:',part1)
 
+print('----- part 2 -----')
+
+lastpct = 0
 for (ox,oy) in room:
-    print (ox,oy)
-    if room[(ox,oy)] != '.':
+    if trace[(ox,oy)] != 'X':
+        # no point blocking a path that's never used!
         continue
+
+    # try dropping an obstacle here
     room[ox,oy] = '#'
     good = dopath(sx,sy)
     if good == 'LOOP':
         part2 += 1
-        print('got one!',part2)
     room[ox,oy] = '.'
 
-print('part1:',part1)
+    # report on progress
+    pct_done = round(100*(1 - oy/room.height()))
+    if (pct_done != lastpct) and (pct_done % 5 == 0):
+        lastpct = pct_done
+        print(pct_done, "% done", part2, "loops found so far")
+
+    
+print('------------------')
 print('part2:',part2)
