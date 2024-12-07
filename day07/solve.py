@@ -25,27 +25,31 @@ def possible(val,nums,cat = False):
         return False
     
     n = nums.pop()
-    if len(nums) == 0:
-        nums.append(n)
-        return val == n
-    # try +
-    if possible(val - n, nums,cat):
-        nums.append(n)
-        return True
-    # try *
-    if possible(val/n, nums,cat):
-        nums.append(n)
-        return True
+    try:
+        # last number in list
+        if not nums:
+            return val == n
 
-    # try ||
-    if cat:
-        tenpow = int('1'+'0'*len(str(n)))
-        if (val - n) % tenpow == 0 and possible((val - n)/tenpow, nums,cat):
-            nums.append(n)
+        # try +
+        if possible(val - n, nums, cat):
             return True
-        
-    nums.append(n)
-    return False
+
+        # try *
+        if possible(val/n, nums, cat):
+            return True
+
+        # try ||
+        if cat:
+            tenpow = 10**len(str(n))
+            if (val - n) % tenpow == 0:
+                if possible((val - n)/tenpow, nums, cat):
+                    return True
+                
+        # not possible
+        return False
+    
+    finally:
+        nums.append(n)
 
 for line in inputlines:
     test,numstr = line.split(':')
