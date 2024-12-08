@@ -247,6 +247,11 @@ class Point:
         self.x /= scalar
         self.y /= scalar
         return self
+
+    def __ifloordiv__(self,scalar):
+        self.x //= scalar
+        self.y //= scalar
+        return self
     
     # Everything below here is dimension agnostic and inherited to Point3d
     
