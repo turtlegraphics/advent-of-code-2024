@@ -6,9 +6,10 @@
 #
 import sys
 sys.path.append("..")
-from aocutils import *
+import aocutils
+import functools
 
-args = parse_args()
+args = aocutils.parse_args()
 
 inputlines = [x.strip() for x in open(args.file).readlines()]
 
@@ -22,7 +23,8 @@ part1, part2 = 0,0
 stones = [int(x) for x in inputlines[0].split()]
 print('start:',stones)
 
-@memoized
+
+@functools.cache
 def blinklen(x,depth):
     if depth == 0:
         return 1
