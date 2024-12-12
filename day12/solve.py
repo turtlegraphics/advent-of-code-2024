@@ -57,8 +57,11 @@ for p in done:
 
     for q in dist:
         done[q] = '.'
-        for n in pf.neighbors(q):
-            if pf[n] != plant:
+        for n in g.neighbors(q,validate=False):
+            try:
+                if g[n] != plant:
+                    perim += 1
+            except KeyError:
                 perim += 1
     price1 = len(dist)*perim
     part1 += price1
