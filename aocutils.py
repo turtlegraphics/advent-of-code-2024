@@ -485,19 +485,9 @@ class Grid:
         If vflip is False, the first line of map is at y=0 and the lines
         proceed upwards from there.
         """
-        if vflip:
-            y = len(map)-1
-        else:
-            y = 0
-        for row in map:
-            x = 0
-            for v in list(row):
+        for y,row in enumerate(reversed(map) if vflip else map):
+            for x,v in enumerate(list(row)):
                 self[(x,y)] = v
-                x += 1
-            if vflip:
-                y -= 1
-            else:
-                y += 1
 
     def dijkstra(self, source, target = None,
                  distance_function = lambda u,v : 1):
@@ -924,12 +914,11 @@ __     _  __
 | \__ `\O/  `--  {}    \}    {/
 \    \_(~)/______/=____/=____/=*
  \=======/    //\\  >\/> || \> 
-----`---`---  `` `` ```` `` ``
-""".split('\n')
+----`---`---  `` `` ```` `` ``""".split('\n')
     sleigh = Grid()
     sleigh.scan(sleighart)
     print(sleigh)
-    print(sleigh.bounds())
+    print('xmin,ymin,xmax,ymax =',sleigh.bounds())
 
     print()
     print('solve a maze')
@@ -986,15 +975,13 @@ AAAA..
 A..A..
 AAA...
 B.BBBB
-BBB...
-""".split('\n')
+BBB...""".split('\n')
     OX = Grid()
     OX.scan(OXmap)
     print(OX)
-    print(OX.bounds())
     print("  The grid has regions A and B (and some .'s)")
-    regionA = OX.region(origin=(0,3))
-    regionB = OX.region(origin=(0,1))
+    regionA = OX.region(origin=(0,2))
+    regionB = OX.region(origin=(0,0))
     print("  %c has area %d, perimeter %d, and %d sides/corners." %
           ('A', len(regionA), OX.perimeter(regionA), OX.sides(regionA)))
     print("  %c has area %d, perimeter %d, and %d sides/corners." %
