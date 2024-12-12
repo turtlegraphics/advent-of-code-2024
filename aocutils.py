@@ -570,6 +570,96 @@ class Grid:
 
         return (dist, prev)
 
+    def region(self,origin):
+        """
+        Find all points in a connected region tha have the same value.
+        """
+        def sameval(u,v):
+            if self[u] == self[v]:
+                return 1
+        (dist,prev) = self.dijkstra(origin,target=None,
+                                    distance_function = sameval)
+        return list(dist.keys())
+
+    def perimeter(self,region):
+        """
+        Return the straight-line perimeter of a region.
+            +-+-+-+-+
+            |A A A A|
+            +-+-+-+-+     +-+
+                          |D|
+            +-+-+   +-+   +-+
+            |B B|   |C|
+            +   +   + +-+
+            |B B|   |C C|
+            +-+-+   +-+ +
+                      |C|
+            +-+-+-+   +-+
+            |E E E|
+            +-+-+-+
+        A has 10, B has 8, C has 10, D has 4, E has 8.
+        (see AoC 2024 day 12)
+        """
+        perim = 0
+        val = self[region[0]]
+        for q in region:
+            for n in self.neighbors(q,validate=False):
+                try:
+                    if self[n] != val:
+                        perim += 1
+                except KeyError:
+                    perim += 1
+        return perim
+
+    def sides(self,region):
+        """
+        Return the number of sides of a region.
+        Equivalently, return the number of corners.
+            +-+-+-+-+
+            |A A A A|
+            +-+-+-+-+     +-+
+                          |D|
+            +-+-+   +-+   +-+
+            |B B|   |C|
+            +   +   + +-+
+            |B B|   |C C|
+            +-+-+   +-+ +
+                      |C|
+            +-+-+-+   +-+
+            |E E E|
+            +-+-+-+
+        A, B, D, E have 4.  C has 8.
+        (see AoC 2024 day 12)
+        """
+        val = self[region[0]]
+        corners = 0
+        for (x,y) in region:
+            for dx in [-1,1]:
+                for dy in [-1,1]:
+                    try:
+                        valx = (self[x+dx,y] == val)
+                    except KeyError:
+                        valx = False
+
+                    try:
+                        valy = (self[x,y+dy] == val)
+                    except KeyError:
+                        valy = False
+
+                    try:
+                        valz = (self[x+dx,y+dy] == val)
+                    except KeyError:
+                        valz = False
+
+                    if (not valz) and valx and valy:
+                        # inside corner
+                        corners += 1
+
+                    if (not valx) and (not valy):
+                        # outside corner
+                        corners += 1
+        return corners
+
     def __str__(self):
         """Calls display with defaults."""
         return self._display(' ',False,'')
@@ -873,7 +963,7 @@ __     _  __
         if maze[u] == ' ' and maze[v] == ' ':
             return 1
         else:
-            return 10000
+            return None
 
     dist, prev = maze.dijkstra(source = maze_start, target = maze_end,
                                distance_function = nowall)
@@ -887,6 +977,28 @@ __     _  __
         solution[p] = str(dist[p])[-1]
         p = prev[p]
     print(solution)
+
+    # Regions
+    print()
+    print('Region handling')
+    OXmap = """\
+AAAA..
+A..A..
+AAA...
+B.BBBB
+BBB...
+""".split('\n')
+    OX = Grid()
+    OX.scan(OXmap)
+    print(OX)
+    print(OX.bounds())
+    print("  The grid has regions A and B (and some .'s)")
+    regionA = OX.region(origin=(0,3))
+    regionB = OX.region(origin=(0,1))
+    print("  %c has area %d, perimeter %d, and %d sides/corners." %
+          ('A', len(regionA), OX.perimeter(regionA), OX.sides(regionA)))
+    print("  %c has area %d, perimeter %d, and %d sides/corners." %
+          ('B', len(regionB), OX.perimeter(regionB), OX.sides(regionB)))
     
     # HexGrid, HexPoint
     print('-'*20)
